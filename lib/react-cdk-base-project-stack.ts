@@ -3,6 +3,8 @@ import path = require("path");
 import { Construct } from "constructs";
 import { Bucket } from "aws-cdk-lib/aws-s3";
 import { aws_s3_deployment } from "aws-cdk-lib";
+// Custom imports
+import { myLambdas } from "./cdk-lambdas";
 // Uncomment below when using cloudfront
 import { Certificate } from "aws-cdk-lib/aws-certificatemanager";
 import { Distribution } from "aws-cdk-lib/aws-cloudfront";
@@ -16,6 +18,9 @@ const baseUrl = process.env.baseUrl ?? "";
 export class ReactCdkBaseProjectStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
     super(scope, id, props);
+
+    // ********************** LAMBDAS **********************
+    const allMyLambdas = new myLambdas(this, id, props);
 
     // ********************** WEBSITE - S3 **********************
     const websiteBucket = new Bucket(this, "s3bucket", {
