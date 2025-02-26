@@ -49,5 +49,10 @@ export class ReactCdkBaseProjectStack extends cdk.Stack {
       //distribution: cfDistribution,
       //distributionPaths: ["/*"],
     });
+
+    // ********************** CDK OUTPUTS **********************
+    new cdk.CfnOutput(this, "BucketUrl", {
+      value: websiteBucket.bucketWebsiteUrl,
+    });
   }
 }
