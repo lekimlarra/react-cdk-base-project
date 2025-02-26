@@ -4,9 +4,9 @@ This is a repository to fork when creating a new static website in AWS.
 
 ## Important commands
 
+- `aws sso login` to login to AWS before doing a deploy
 - `npm run build` compile the react website
 - `cdk deploy` to deploy the infrastructure
-- `aws sso login` to login to AWS before doing a deploy
 
 # TODO
 
