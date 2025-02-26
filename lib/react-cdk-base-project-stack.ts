@@ -4,11 +4,11 @@ import { Construct } from "constructs";
 import { Bucket } from "aws-cdk-lib/aws-s3";
 import { aws_s3_deployment } from "aws-cdk-lib";
 // Custom imports
-import { myLambdas } from "./cdk-lambdas";
+import { myApi } from "./api";
 // Uncomment below when using cloudfront
-import { Certificate } from "aws-cdk-lib/aws-certificatemanager";
+/*import { Certificate } from "aws-cdk-lib/aws-certificatemanager";
 import { Distribution } from "aws-cdk-lib/aws-cloudfront";
-import { S3Origin } from "aws-cdk-lib/aws-cloudfront-origins";
+import { S3Origin } from "aws-cdk-lib/aws-cloudfront-origins";*/
 
 const bucketName = process.env.bucketName ?? "";
 const websiteBuildPath = process.env.websiteBuildPath ?? "../resources/website/build";
@@ -19,8 +19,8 @@ export class ReactCdkBaseProjectStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
     super(scope, id, props);
 
-    // ********************** LAMBDAS **********************
-    const allMyLambdas = new myLambdas(this, id, props);
+    // ********************** API **********************
+    const myAPI = new myApi(this, id, props);
 
     // ********************** WEBSITE - S3 **********************
     const websiteBucket = new Bucket(this, "s3bucket", {
