@@ -1,12 +1,38 @@
 # Welcome
 
 This is a repository to fork when creating a new static website in AWS.
+This CDK project will automatically create for you:
 
-## Important commands
+- A S3 bucket to host a public website
+- An API with lambdas for each endpoint
+- An API key to control the access and usage of your API
+
+Soon:
+
+- A configurable AWS budget to make sure you don't get a surprise big bill
+- Cloudformation layer for caching
+- Route 53 domain url
+- HTTPS certificate
+- A DynamoDB database to take advantage of the AWS free tier
+
+## Getting started
+
+Follow these steps to get started:
+
+1. Download and install depencencies `npm`, `aws cli` and `cdk`.
+1. Review the `.env` file and change the values to whatever you want (In a section below all the parameters are explained)
+
+### Important commands
 
 - `aws sso login` to login to AWS before doing a deploy
-- `npm run build` compile the react website
+- `npm run build` compile the react website (run it in the folder of the website configured in `websiteBuildPath`)
 - `cdk deploy` to deploy the infrastructure
+
+## Custom variables
+
+In the file `.env` you can customize your application. These are the values:
+
+- bucketName:
 
 ## API
 
