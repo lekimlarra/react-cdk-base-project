@@ -121,6 +121,9 @@ export class myApi {
     }
 
     // ********************** CDK OUTPUTS **********************
+    new cdk.CfnOutput(scope, `APIURL`, {
+      value: api.url,
+    });
     new cdk.CfnOutput(scope, "apiKeyArn", {
       value: basicKey.keyArn,
     });

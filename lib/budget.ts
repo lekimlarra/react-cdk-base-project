@@ -11,6 +11,7 @@ const budgetFirstNotificationLimit = process.env.budgetFirstNotificationLimit ??
 const budgetStopServiceLimit = process.env.budgetStopServiceLimit ?? 100;
 const tagName = process.env.tagName ?? "react-cdk-base-project";
 const budgetName = process.env.budgetName ?? "";
+const appDeployedOnce = Boolean(process.env.appDeployedOnce) ?? false;
 
 export class budget {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
@@ -21,51 +22,53 @@ export class budget {
     });
     budgetTopic.addSubscription(new EmailSubscription(notificationEmail));
 
-    // Budget definition
-    const myBudget = new CfnBudget(scope, "MonthlyBudget", {
-      budget: {
-        budgetName: budgetName,
-        budgetLimit: {
-          amount: Number(budgetFirstNotificationLimit),
-          unit: "USD",
-        },
-        timeUnit: "MONTHLY",
-        budgetType: "COST",
-      },
-      /*costFilters: {
-        TagKeyValue: [`Project$${tagName}`],
-      },*/
-      notificationsWithSubscribers: [
-        {
-          // First notification
-          notification: {
-            threshold: firstThreshold,
-            notificationType: "ACTUAL",
-            comparisonOperator: "GREATER_THAN",
+    if (appDeployedOnce) {
+      // Budget definition
+      const myBudget = new CfnBudget(scope, "MonthlyBudget", {
+        budget: {
+          budgetName: budgetName,
+          budgetLimit: {
+            amount: Number(budgetFirstNotificationLimit),
+            unit: "USD",
           },
-          subscribers: [
-            {
-              subscriptionType: "SNS",
-              address: budgetTopic.topicArn,
-            },
-          ],
+          timeUnit: "MONTHLY",
+          budgetType: "COST",
         },
-        {
-          // Notification to stop service
-          notification: {
-            threshold: 100, // 100% of the budget
-            notificationType: "ACTUAL",
-            comparisonOperator: "GREATER_THAN",
+        //costFilters: {
+        //  TagKeyValue: [`Project$${tagName}`],
+        //},
+        notificationsWithSubscribers: [
+          {
+            // First notification
+            notification: {
+              threshold: firstThreshold,
+              notificationType: "ACTUAL",
+              comparisonOperator: "GREATER_THAN",
+            },
+            subscribers: [
+              {
+                subscriptionType: "SNS",
+                address: budgetTopic.topicArn,
+              },
+            ],
           },
-          subscribers: [
-            {
-              subscriptionType: "SNS",
-              address: budgetTopic.topicArn,
+          {
+            // Notification to stop service
+            notification: {
+              threshold: 100, // 100% of the budget
+              notificationType: "ACTUAL",
+              comparisonOperator: "GREATER_THAN",
             },
-          ],
-        },
-      ],
-    });
+            subscribers: [
+              {
+                subscriptionType: "SNS",
+                address: budgetTopic.topicArn,
+              },
+            ],
+          },
+        ],
+      });
+    }
 
     // Allowing the budget to publish to the topic
     budgetTopic.addToResourcePolicy(

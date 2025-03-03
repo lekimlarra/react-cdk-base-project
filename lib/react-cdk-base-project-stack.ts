@@ -6,6 +6,8 @@ import { aws_s3_deployment } from "aws-cdk-lib";
 // Custom imports
 import { myApi } from "./api";
 import { budget } from "./budget";
+import { Distribution, OriginProtocolPolicy } from "aws-cdk-lib/aws-cloudfront";
+import { HttpOrigin } from "aws-cdk-lib/aws-cloudfront-origins";
 // Uncomment below when using cloudfront
 /*import { Certificate } from "aws-cdk-lib/aws-certificatemanager";
 import { Distribution } from "aws-cdk-lib/aws-cloudfront";
@@ -38,13 +40,17 @@ export class ReactCdkBaseProjectStack extends cdk.Stack {
     });
 
     // ********************** CLOUDFRONT **********************
-    /*let certificateArn = httpCertificate;
-    const certificate = Certificate.fromCertificateArn(this, "Certificate", certificateArn);
+    //let certificateArn = httpCertificate;
+    //const certificate = Certificate.fromCertificateArn(this, "Certificate", certificateArn);
     const cfDistribution = new Distribution(this, "myDist", {
-      defaultBehavior: { origin: new S3Origin(websiteBucket) },
-      domainNames: [baseUrl],
-      certificate: certificate,
-    });*/
+      defaultBehavior: {
+        origin: new HttpOrigin(`${websiteBucket.bucketWebsiteDomainName}`, {
+          protocolPolicy: OriginProtocolPolicy.HTTP_ONLY, // Static website solo soporta HTTP (no HTTPS)
+        }),
+      },
+      //domainNames: [baseUrl],
+      //certificate: certificate,
+    });
 
     // ********************** WEBSITE - S3 DEPLOYMENT **********************
     // Deploying website files to S3 bucket with a cloudfront cache invalidation!
@@ -62,6 +68,9 @@ export class ReactCdkBaseProjectStack extends cdk.Stack {
     // ********************** CDK OUTPUTS **********************
     new cdk.CfnOutput(this, "BucketUrl", {
       value: websiteBucket.bucketWebsiteUrl,
+    });
+    new cdk.CfnOutput(this, "CloudFrontUrl", {
+      value: cfDistribution.domainName,
     });
   }
 }
