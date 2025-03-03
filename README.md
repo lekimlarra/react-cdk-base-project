@@ -6,7 +6,9 @@ This CDK project will automatically create for you:
 - A S3 bucket to host a public website
 - An API with lambdas for each endpoint
 - An API key to control the access and usage of your API
-- A configurable AWS budget to make sure you don't get a surprise big bill, in USD (this will trigger for the billing of the whole account, a filter by these resources is not yet done, although we recommend having different AWS accounts for different purposes)
+- A configurable AWS budget to make sure you don't get a surprise big bill, in USD, with 2 steps:
+  - First an email once you reach `budgetFirstNotificationLimit`
+  - Blocking all internet access to this project once you reach `budgetStopServiceLimit` (PENDING)
 
 Soon:
 
