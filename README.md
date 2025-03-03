@@ -21,6 +21,8 @@ Follow these steps to get started:
 
 1. Download and install depencencies `npm`, `aws cli` and `cdk`.
 1. Review the `.env` file and change the values to whatever you want (In a section below all the parameters are explained)
+1. Write your react website (or change it by any other static website)
+1. Create and write your APi endpoints in the lambda folder
 
 ### Important commands
 
