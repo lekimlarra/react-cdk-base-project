@@ -5,6 +5,7 @@ import { Bucket } from "aws-cdk-lib/aws-s3";
 import { aws_s3_deployment } from "aws-cdk-lib";
 // Custom imports
 import { myApi } from "./api";
+import { budget } from "./budget";
 // Uncomment below when using cloudfront
 /*import { Certificate } from "aws-cdk-lib/aws-certificatemanager";
 import { Distribution } from "aws-cdk-lib/aws-cloudfront";
@@ -54,6 +55,9 @@ export class ReactCdkBaseProjectStack extends cdk.Stack {
       //distribution: cfDistribution,
       //distributionPaths: ["/*"],
     });
+
+    // ********************** BUDGET **********************
+    const myBudget = new budget(this, id, props);
 
     // ********************** CDK OUTPUTS **********************
     new cdk.CfnOutput(this, "BucketUrl", {

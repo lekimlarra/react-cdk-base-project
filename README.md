@@ -6,10 +6,10 @@ This CDK project will automatically create for you:
 - A S3 bucket to host a public website
 - An API with lambdas for each endpoint
 - An API key to control the access and usage of your API
+- A configurable AWS budget to make sure you don't get a surprise big bill, in USD (this will trigger for the billing of the whole account, a filter by these resources is not yet done, although we recommend having different AWS accounts for different purposes)
 
 Soon:
 
-- A configurable AWS budget to make sure you don't get a surprise big bill
 - Cloudformation layer for caching
 - Route 53 domain url
 - HTTPS certificate
@@ -19,10 +19,12 @@ Soon:
 
 Follow these steps to get started:
 
-1. Download and install depencencies `npm`, `aws cli` and `cdk`.
+1. Download and install depencencies `npm`, `aws cli` and `cdk`
+1. Configure your local environment to login to AWS. This project will deploy to the region you hace as default
 1. Review the `.env` file and change the values to whatever you want (In a section below all the parameters are explained)
 1. Write your react website (or change it by any other static website)
 1. Create and write your APi endpoints in the lambda folder
+1. If you want to filter your budget for only the resources on this project, you will need to create
 
 ### Important commands
 
