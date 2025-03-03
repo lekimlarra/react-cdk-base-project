@@ -9,13 +9,13 @@ This CDK project will automatically create for you:
 - A configurable AWS budget to make sure you don't get a surprise big bill, in USD, with 2 steps:
   - First an email once you reach `budgetFirstNotificationLimit`
   - Blocking all internet access to this project once you reach `budgetStopServiceLimit` (PENDING)
+- Cloudfront layer for caching
 
 Soon:
 
-- Cloudformation layer for caching
+- A DynamoDB database to take advantage of the AWS free tier
 - Route 53 domain url
 - HTTPS certificate
-- A DynamoDB database to take advantage of the AWS free tier
 
 ## Getting started
 
