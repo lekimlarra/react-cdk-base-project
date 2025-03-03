@@ -9,6 +9,7 @@ const quota = process.env.apyKeyQuota ?? 1000;
 const rateLimit = process.env.apiKeyRateLimit ?? 5;
 const burstLimit = process.env.apyKeyBurstLimit ?? 5;
 const lambdasPath = path.join(__dirname, process.env.lambdasPath ?? "../resources/lambdas");
+const apyKeyName = process.env.apyKeyName ?? "";
 
 const listarArchivos = (directorio: string): string[] => {
   try {
@@ -76,10 +77,10 @@ export class myApi {
       stage: api.deploymentStage,
     });
     // Creating key
-    const basicKey = new ApiKey(scope, `basicKey`, {
+    const basicKey = new ApiKey(scope, `${apyKeyName}`, {
       enabled: true,
       description: "This key is just to be sure no one can use the API too much",
-      apiKeyName: "basicKey",
+      apiKeyName: apyKeyName,
     });
     basicPlan.addApiKey(basicKey);
     // ********************** ENDPOINTS **********************

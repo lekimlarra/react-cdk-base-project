@@ -3,9 +3,10 @@ import * as dotenv from "dotenv";
 dotenv.config();
 import * as cdk from "aws-cdk-lib";
 import { ReactCdkBaseProjectStack } from "../lib/react-cdk-base-project-stack";
+const tagName = process.env.tagName ?? "react-cdk-base-project";
 
 const app = new cdk.App();
-new ReactCdkBaseProjectStack(app, "ReactCdkBaseProjectStack", {
+const stack = new ReactCdkBaseProjectStack(app, "ReactCdkBaseProjectStack", {
   /* If you don't specify 'env', this stack will be environment-agnostic.
    * Account/Region-dependent features and context lookups will not work,
    * but a single synthesized template can be deployed anywhere. */
@@ -17,3 +18,4 @@ new ReactCdkBaseProjectStack(app, "ReactCdkBaseProjectStack", {
   // env: { account: '123456789012', region: 'us-east-1' },
   /* For more information, see https://docs.aws.amazon.com/cdk/latest/guide/environments.html */
 });
+cdk.Tags.of(stack).add('Project', tagName);
