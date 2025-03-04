@@ -12,18 +12,21 @@ const rateLimit = process.env.apiKeyRateLimit ?? 5;
 const burstLimit = process.env.apyKeyBurstLimit ?? 5;
 const lambdasPath = path.join(__dirname, process.env.lambdasPath ?? "../resources/lambdas");
 const apyKeyName = process.env.apyKeyName ?? "";
+const restApiName = process.env.restApiName ?? "cdk-template-api";
 
 export class myApi {
   allLambdaFiles = utils.listFiles(lambdasPath);
   metodos = utils.listMethods(this.allLambdaFiles);
   allLambdas: Function[] = [];
+  api: RestApi;
   constructor(scope: Construct, id: string, createdTables: Table[], props?: cdk.StackProps) {
     // Adding OPTIONS for CORS
     this.metodos.push("OPTIONS");
     console.log("All lambdas:", this.allLambdaFiles);
     console.log("All metodos:", this.metodos);
     // ********************** API **********************
-    const api = new RestApi(scope, "DR-API", {
+    this.api = new RestApi(scope, "cdk-template-api", {
+      restApiName: restApiName,
       defaultCorsPreflightOptions: {
         allowHeaders: ["Content-Type", "X-Amz-Date", "Authorization", "X-Api-Key", "x-api-key", "Access-Control-Allow-Origin"],
         allowMethods: this.metodos,
@@ -35,7 +38,7 @@ export class myApi {
     // ********************** KEYS AND USAGE PLANS **********************
     // Creating usage plan
     let usagePlanName = "basicUsagePlan";
-    const basicPlan = api.addUsagePlan(usagePlanName, {
+    const basicPlan = this.api.addUsagePlan(usagePlanName, {
       name: usagePlanName,
       description: "This usage plan is just to be sure no one can use the API too much",
       quota: {
@@ -48,7 +51,7 @@ export class myApi {
       },
     });
     basicPlan.addApiStage({
-      stage: api.deploymentStage,
+      stage: this.api.deploymentStage,
     });
     // Creating key
     const basicKey = new ApiKey(scope, `${apyKeyName}`, {
@@ -79,7 +82,7 @@ export class myApi {
           const endpointPath = utils.createPath(fileName);
           console.log(`lambdaMethod: ${lambdaMethod} endpointPath: ${endpointPath}`);
           const currentLambda = new LambdaIntegration(thisLambda, {});
-          api.root.addResource(endpointPath).addMethod(lambdaMethod, currentLambda, {
+          this.api.root.addResource(endpointPath).addMethod(lambdaMethod, currentLambda, {
             apiKeyRequired: true,
           });
 
@@ -102,7 +105,7 @@ export class myApi {
 
     // ********************** CDK OUTPUTS **********************
     new cdk.CfnOutput(scope, `APIURL`, {
-      value: api.url,
+      value: this.api.url,
     });
     new cdk.CfnOutput(scope, "apiKeyArn", {
       value: basicKey.keyArn,

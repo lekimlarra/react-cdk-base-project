@@ -3,7 +3,7 @@ import path = require("path");
 import { Construct } from "constructs";
 import { Bucket } from "aws-cdk-lib/aws-s3";
 import { aws_s3_deployment } from "aws-cdk-lib";
-import { Distribution, OriginProtocolPolicy } from "aws-cdk-lib/aws-cloudfront";
+import { AllowedMethods, CachePolicy, Distribution, OriginProtocolPolicy, ViewerProtocolPolicy } from "aws-cdk-lib/aws-cloudfront";
 import { HttpOrigin } from "aws-cdk-lib/aws-cloudfront-origins";
 // Custom imports
 import { myApi } from "./api";
@@ -47,6 +47,16 @@ export class ReactCdkBaseProjectStack extends cdk.Stack {
         origin: new HttpOrigin(`${websiteBucket.bucketWebsiteDomainName}`, {
           protocolPolicy: OriginProtocolPolicy.HTTP_ONLY, // Static website solo soporta HTTP (no HTTPS)
         }),
+      },
+      additionalBehaviors: {
+        "prod/*": {
+          origin: new HttpOrigin(`${myAPI.api.restApiId}.execute-api.${this.region}.amazonaws.com`, {
+            //originPath: "/prod",
+          }),
+          cachePolicy: CachePolicy.CACHING_DISABLED, // Suele ser mejor desactivar caché en APIs.
+          allowedMethods: AllowedMethods.ALLOW_ALL,
+          viewerProtocolPolicy: ViewerProtocolPolicy.HTTPS_ONLY,
+        },
       },
     });
 
