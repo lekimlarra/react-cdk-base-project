@@ -3,7 +3,7 @@ import path = require("path");
 import { Construct } from "constructs";
 import { Bucket } from "aws-cdk-lib/aws-s3";
 import { aws_s3_deployment } from "aws-cdk-lib";
-import { AllowedMethods, CachePolicy, Distribution, OriginProtocolPolicy, ViewerProtocolPolicy } from "aws-cdk-lib/aws-cloudfront";
+import { AllowedMethods, CachePolicy, Distribution, OriginProtocolPolicy, OriginRequestCookieBehavior, OriginRequestHeaderBehavior, OriginRequestPolicy, OriginRequestQueryStringBehavior, ViewerProtocolPolicy } from "aws-cdk-lib/aws-cloudfront";
 import { HttpOrigin } from "aws-cdk-lib/aws-cloudfront-origins";
 // Custom imports
 import { myApi } from "./api";
@@ -42,6 +42,14 @@ export class ReactCdkBaseProjectStack extends cdk.Stack {
     });
 
     // ********************** CLOUDFRONT **********************
+    // This is needed to allow the API key header to be pass through from the CloudFront distribution to the API Gateway
+    const apiKeyPolicy = new OriginRequestPolicy(this, "ApiKeyPolicy", {
+      originRequestPolicyName: "ApiKeyPolicy",
+      headerBehavior: OriginRequestHeaderBehavior.allowList("x-api-key"),
+      queryStringBehavior: OriginRequestQueryStringBehavior.all(),
+      cookieBehavior: OriginRequestCookieBehavior.none(),
+    });
+
     const cfDistribution = new Distribution(this, "myDist", {
       defaultBehavior: {
         origin: new HttpOrigin(`${websiteBucket.bucketWebsiteDomainName}`, {
@@ -56,6 +64,7 @@ export class ReactCdkBaseProjectStack extends cdk.Stack {
           cachePolicy: CachePolicy.CACHING_DISABLED, // Suele ser mejor desactivar caché en APIs.
           allowedMethods: AllowedMethods.ALLOW_ALL,
           viewerProtocolPolicy: ViewerProtocolPolicy.HTTPS_ONLY,
+          originRequestPolicy: apiKeyPolicy,
         },
       },
     });
