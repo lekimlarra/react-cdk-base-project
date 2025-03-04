@@ -1,7 +1,7 @@
 import * as cdk from "aws-cdk-lib";
 import path = require("path");
 import { Construct } from "constructs";
-import { RestApi, LambdaIntegration, Period, ApiKey } from "aws-cdk-lib/aws-apigateway";
+import { RestApi, LambdaIntegration, Period, ApiKey, Stage, Deployment } from "aws-cdk-lib/aws-apigateway";
 import { Function, Runtime, Code } from "aws-cdk-lib/aws-lambda";
 // Custom imports
 import * as utils from "./utils";
@@ -13,6 +13,7 @@ const burstLimit = process.env.apyKeyBurstLimit ?? 5;
 const lambdasPath = path.join(__dirname, process.env.lambdasPath ?? "../resources/lambdas");
 const apyKeyName = process.env.apyKeyName ?? "";
 const restApiName = process.env.restApiName ?? "cdk-template-api";
+const apiProdBasePath = process.env.apiProdBasePath ?? "prod";
 
 export class myApi {
   allLambdaFiles = utils.listFiles(lambdasPath);
@@ -27,13 +28,28 @@ export class myApi {
     // ********************** API **********************
     this.api = new RestApi(scope, "cdk-template-api", {
       restApiName: restApiName,
+      //deploy: false, // Deactivation of the auto deploy (creates "prod", we want a custom one)
       defaultCorsPreflightOptions: {
         allowHeaders: ["Content-Type", "X-Amz-Date", "Authorization", "X-Api-Key", "x-api-key", "Access-Control-Allow-Origin"],
         allowMethods: this.metodos,
         allowCredentials: true,
         allowOrigins: ["*"],
       },
+      deployOptions: {
+        stageName: apiProdBasePath,
+      },
     });
+    /*
+    // Crear el Deployment
+    const deployment = new Deployment(scope, "ApiDeployment", {
+      api: this.api,
+    });
+
+    // Crear el Stage con el nombre que tú quieras
+    const apiStage = new Stage(scope, "ApiStage", {
+      deployment: deployment,
+      stageName: apiProdBasePath,
+    });*/
 
     // ********************** KEYS AND USAGE PLANS **********************
     // Creating usage plan
@@ -52,6 +68,7 @@ export class myApi {
     });
     basicPlan.addApiStage({
       stage: this.api.deploymentStage,
+      //stage: apiStage,
     });
     // Creating key
     const basicKey = new ApiKey(scope, `${apyKeyName}`, {

@@ -9,7 +9,7 @@ This CDK project will automatically create for you:
 - A configurable AWS budget to make sure you don't get a surprise big bill, in USD, with 2 steps:
   - First an email once you reach `budgetFirstNotificationLimit`
   - Blocking all internet access to this project once you reach `budgetStopServiceLimit` (PENDING)
-- Cloudfront layer for caching
+- Cloudfront layer for caching and centralizing internet access to your app
 - A DynamoDB database to take advantage of the AWS free tier
 
 Soon:
@@ -41,6 +41,8 @@ In the file `.env` you can customize your application. These are the values:
 - bucketName:
 
 ## API
+
+The API will create a stage under the path in the `.env` parameter called `apiProdBasePath`.
 
 ### API endpoints
 
@@ -80,6 +82,22 @@ The types can be:
 - `B`: Binary
 - `N`: Number
 - `S`: String
+
+## Cloudfront distribution
+
+This project creates a cloudfront distribution to serve your API and your website. Cloudfront is used for many things, but for this project, the main 2 advantages are:
+
+- Caching the website
+- Centralizing access from the internet to our resources, so if we want to cut service due to a sudden increase in our bill, we can just configure this distribution
+
+### Access to resources
+
+The distribution has 2 behaviours:
+
+1. `/api/*` redirection to the API gateway. You can change this value by changing the parameter `apiProdBasePath` in the `.env` file.
+1. Default to S3 static website
+
+> Make sure to avoid collisions between the path to the API and any URL on your static website.
 
 # TODO
 

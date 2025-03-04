@@ -14,6 +14,7 @@ const bucketName = process.env.bucketName ?? "";
 const websiteBuildPath = process.env.websiteBuildPath ?? "../resources/website/build";
 const httpCertificate = process.env.httpCertificate ?? "";
 const baseUrl = process.env.baseUrl ?? "";
+const apiProdBasePath = (process.env.apiProdBasePath ?? "prod") + "/*";
 
 export class ReactCdkBaseProjectStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
@@ -56,8 +57,8 @@ export class ReactCdkBaseProjectStack extends cdk.Stack {
           protocolPolicy: OriginProtocolPolicy.HTTP_ONLY, // Static website solo soporta HTTP (no HTTPS)
         }),
       },
-      additionalBehaviors: {
-        "prod/*": {
+      /*additionalBehaviors: {
+        apiProdBasePath: {
           origin: new HttpOrigin(`${myAPI.api.restApiId}.execute-api.${this.region}.amazonaws.com`, {
             //originPath: "/prod",
           }),
@@ -66,7 +67,16 @@ export class ReactCdkBaseProjectStack extends cdk.Stack {
           viewerProtocolPolicy: ViewerProtocolPolicy.HTTPS_ONLY,
           originRequestPolicy: apiKeyPolicy,
         },
-      },
+      },*/
+    });
+    const origin = new HttpOrigin(`${myAPI.api.restApiId}.execute-api.${this.region}.amazonaws.com`, {
+      //originPath: "/prod",
+    });
+    cfDistribution.addBehavior(apiProdBasePath, origin, {
+      cachePolicy: CachePolicy.CACHING_DISABLED, // Suele ser mejor desactivar caché en APIs.
+      allowedMethods: AllowedMethods.ALLOW_ALL,
+      viewerProtocolPolicy: ViewerProtocolPolicy.HTTPS_ONLY,
+      originRequestPolicy: apiKeyPolicy,
     });
 
     // ********************** WEBSITE - S3 DEPLOYMENT **********************
