@@ -54,6 +54,33 @@ Al crear una API, creamos automáticamente una API key para limitar el uso de la
 El valor de la key tendrás que ir a buscarlo a tu cuenta de AWS.
 Puedes configurar los valores del api key en el fichero `.env`.
 
+## DATABASE
+
+You can create your own databases by creating JSON files inside the folder `/resources/databases`.
+The JSON files must follow this structure:
+
+```JSON
+{
+    "pk": "pkId",
+    "pkType": "S",
+    "sk": "skId",
+    "skType": "S"
+}
+```
+
+Where:
+
+- `pk` is the partition key. This field is mandatory
+- `pkType` is the type of the partition key. This field is mandatory.
+- `sk` is the sort key. This field is optional.
+- `skType` is the type of the partition key. This field is optional, but only if there is no `sk`.
+
+The types can be:
+
+- `B`: Binary
+- `N`: Number
+- `S`: String
+
 # TODO
 
 1. Add a Cost and usage report and a way to cut services if needed
