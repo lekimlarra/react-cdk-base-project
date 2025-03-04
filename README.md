@@ -14,6 +14,12 @@ This CDK project will automatically create for you:
 
 Soon:
 
+- Diagram of the infrastructure that will be deployed
+- Automatic deploy from GitHub actions and secrets
+- Something with Cognito to synchronize with user creation
+- Dashboard in CloudWatch (may incur costs!! 💶💵🤑)
+- Observability (incurs costs!! 💶💵🤑)
+- Alerting (incurs costs!! 💶💵🤑) - Errors 4XX or 5XX, spike in number of connections...
 - Route 53 domain url
 - HTTPS certificate
 
