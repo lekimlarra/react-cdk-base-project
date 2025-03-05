@@ -109,3 +109,8 @@ The distribution has 2 behaviours:
 
 If you want to have users with login in your website, you can set the parameter `createCognito` to `true` in the `.env` file. This will create a Cognito Pool and a Cognito Pool Client that you can use to manage your user sessions.
 In the file [Cognito on react.md](/docs/Cognito%20on%20react.md) you can see a detailed explanation on how to connect your react website to cognito in a very simple way.
+
+## Expected costs of this infrastructure
+
+With all these AWS products, we are taking advantage of the free tier, but with enough usage, you will surpase the thresholds for the free tier.
+In [this document](/docs/Free%20tier%20short%20explanation.md) you can see the detailed list of what to expect (as of March2025 and an approximation/simplification, visit AWS pricing website for the real values).
