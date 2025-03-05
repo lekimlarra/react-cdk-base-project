@@ -40,29 +40,34 @@ Follow these steps to get started:
 - `npm run build` compile the react website (run it in the folder of the website configured in `websiteBuildPath`)
 - `cdk deploy` to deploy the infrastructure
 
-## Custom variables
+### Customization
 
 In the file `.env` you can customize your application. These are the values:
 
 - bucketName:
 
-## API
+## Infrastructure
+
+Here is a diagram of the infrastructure you can create with this project:
+![Infrastructure Diagram](/docs/cdk-template-infra.jpg)
+
+### API
 
 The API will create a stage under the path in the `.env` parameter called `apiProdBasePath`.
 
-### API endpoints
+#### API endpoints
 
 To create a new endpoint, add a new file (for now only Python) in the `resources/lambdas` folder.
 You should name your file following this nomenclature `METHOD-functionName.py`. The `METHOD` will be used to create the endpoint.
 For example, `GET-users.py` will create a GET endpoint with the lambda.
 
-### API usage
+#### API usage
 
 When creating an API, an API key is automatically generated to limit the usage of the API if necessary.
 You will need to retrieve the key value from your AWS account.
 You can configure the API key values in the `.env` file.
 
-## DATABASE
+### DATABASE
 
 You can create your own databases by creating JSON files inside the folder `/resources/databases`.
 The JSON files must follow this structure:
@@ -89,14 +94,14 @@ The types can be:
 - `N`: Number
 - `S`: String
 
-## Cloudfront distribution
+### Cloudfront distribution
 
 This project creates a cloudfront distribution to serve your API and your website. Cloudfront is used for many things, but for this project, the main 2 advantages are:
 
 - Caching the website
 - Centralizing access from the internet to our resources, so if we want to cut service due to a sudden increase in our bill, we can just configure this distribution
 
-### Access to resources
+#### Access to resources
 
 The distribution has 2 behaviours:
 
@@ -105,12 +110,12 @@ The distribution has 2 behaviours:
 
 > Make sure to avoid collisions between the path to the API and any URL on your static website.
 
-## Cognito
+### Cognito
 
 If you want to have users with login in your website, you can set the parameter `createCognito` to `true` in the `.env` file. This will create a Cognito Pool and a Cognito Pool Client that you can use to manage your user sessions.
 In the file [Cognito on react.md](/docs/Cognito%20on%20react.md) you can see a detailed explanation on how to connect your react website to cognito in a very simple way.
 
-## Expected costs of this infrastructure
+### Expected costs of this infrastructure
 
 With all these AWS products, we are taking advantage of the free tier, but with enough usage, you will surpase the thresholds for the free tier.
 In [this document](/docs/Free%20tier%20short%20explanation.md) you can see the detailed list of what to expect (as of March2025 and an approximation/simplification, visit AWS pricing website for the real values).
