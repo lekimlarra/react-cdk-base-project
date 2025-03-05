@@ -11,12 +11,12 @@ This CDK project will automatically create for you:
   - Blocking all internet access to this project once you reach `budgetStopServiceLimit` (PENDING)
 - Cloudfront layer for caching and centralizing internet access to your app
 - A DynamoDB database to take advantage of the AWS free tier
+- Creating cognito pool and pool client to connect your user website
 
 Soon:
 
 - Diagram of the infrastructure that will be deployed
 - Automatic deploy from GitHub actions and secrets
-- Something with Cognito to synchronize with user creation
 - Dashboard in CloudWatch (may incur costs!! 💶💵🤑)
 - Observability (incurs costs!! 💶💵🤑)
 - Alerting (incurs costs!! 💶💵🤑) - Errors 4XX or 5XX, spike in number of connections...
@@ -104,3 +104,8 @@ The distribution has 2 behaviours:
 1. Default to S3 static website
 
 > Make sure to avoid collisions between the path to the API and any URL on your static website.
+
+## Cognito
+
+If you want to have users with login in your website, you can set the parameter `createCognito` to `true` in the `.env` file. This will create a Cognito Pool and a Cognito Pool Client that you can use to manage your user sessions.
+In the file [Cognito on react.md](/docs/Cognito%20on%20react.md) you can see a detailed explanation on how to connect your react website to cognito in a very simple way.

@@ -9,12 +9,14 @@ import { HttpOrigin } from "aws-cdk-lib/aws-cloudfront-origins";
 import { myApi } from "./api";
 import { budget } from "./budget";
 import { database } from "./database";
+import { myCognito } from "./cognito";
 
 const bucketName = process.env.bucketName ?? "";
 const websiteBuildPath = process.env.websiteBuildPath ?? "../resources/website/build";
 const httpCertificate = process.env.httpCertificate ?? "";
-const baseUrl = process.env.baseUrl ?? "";
+const yourDomain = process.env.yourDomain ?? "";
 const apiProdBasePath = (process.env.apiProdBasePath ?? "prod") + "/*";
+const createCognito = Boolean(process.env.createCognito) ?? false;
 
 export class ReactCdkBaseProjectStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
@@ -57,21 +59,8 @@ export class ReactCdkBaseProjectStack extends cdk.Stack {
           protocolPolicy: OriginProtocolPolicy.HTTP_ONLY, // Static website solo soporta HTTP (no HTTPS)
         }),
       },
-      /*additionalBehaviors: {
-        apiProdBasePath: {
-          origin: new HttpOrigin(`${myAPI.api.restApiId}.execute-api.${this.region}.amazonaws.com`, {
-            //originPath: "/prod",
-          }),
-          cachePolicy: CachePolicy.CACHING_DISABLED, // Suele ser mejor desactivar caché en APIs.
-          allowedMethods: AllowedMethods.ALLOW_ALL,
-          viewerProtocolPolicy: ViewerProtocolPolicy.HTTPS_ONLY,
-          originRequestPolicy: apiKeyPolicy,
-        },
-      },*/
     });
-    const origin = new HttpOrigin(`${myAPI.api.restApiId}.execute-api.${this.region}.amazonaws.com`, {
-      //originPath: "/prod",
-    });
+    const origin = new HttpOrigin(`${myAPI.api.restApiId}.execute-api.${this.region}.amazonaws.com`, {});
     cfDistribution.addBehavior(apiProdBasePath, origin, {
       cachePolicy: CachePolicy.CACHING_DISABLED, // Suele ser mejor desactivar caché en APIs.
       allowedMethods: AllowedMethods.ALLOW_ALL,
@@ -90,6 +79,10 @@ export class ReactCdkBaseProjectStack extends cdk.Stack {
 
     // ********************** BUDGET **********************
     const myBudget = new budget(this, id, props);
+
+    // ********************** COGNITO **********************
+    let thisCognito: myCognito;
+    if (createCognito) thisCognito = new myCognito(this, id, props);
 
     // ********************** CDK OUTPUTS **********************
     new cdk.CfnOutput(this, "BucketUrl", {
