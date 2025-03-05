@@ -12,10 +12,10 @@ This CDK project will automatically create for you:
 - Cloudfront layer for caching and centralizing internet access to your app
 - A DynamoDB database to take advantage of the AWS free tier
 - Creating cognito pool and pool client to connect your user website
+- Diagram of the infrastructure that will be deployed
 
 Soon:
 
-- Diagram of the infrastructure that will be deployed
 - Automatic deploy from GitHub actions and secrets
 - Dashboard in CloudWatch (may incur costs!! 💶💵🤑)
 - Observability (incurs costs!! 💶💵🤑)
@@ -44,7 +44,32 @@ Follow these steps to get started:
 
 In the file `.env` you can customize your application. These are the values:
 
-- bucketName:
+```properties
+# Your variables
+bucketName - The name of the S3 bucket you will create
+# Soon httpCertificate=arn:aws:acm:us-east-1:ACCOUNT:certificate/UUID
+yourDomain - Your url domain starting with https://
+notificationEmail - Your email to receive notifications from the budgets
+budgetFirstNotificationLimit - Limit in $ for the monthly expense where, if exceeded, you will receive an email
+budgetStopServiceLimit - Limit in $ for the monthly expense where, if exceeded, your website will be disconnected from the internet --> NOT READY YET
+budgetName - The name of the budget
+restApiName - The name of your API
+
+# Cognito
+createCognito - Boolean, if true, will create a cognito pool and client
+userPoolName - Pool name
+userPoolClientName - Pool client name
+cognitoCallBackPath - The path url for call back when using cognito to manage your users. We recommend leaving the default "/auth/callback"
+
+# API key - See api key documentation to know more about quota, burst and rate limits
+apyKeyName - Name of the api key you will create
+apyKeyQuota=1000
+apiKeyRateLimit=5
+apyKeyBurstLimit=5
+
+# Single time creation tags
+appDeployedOnce - This is important, a Boolean. The Budget can only be created once, so after your first "cdk deploy", you must set this to "true"
+```
 
 ## Infrastructure
 
