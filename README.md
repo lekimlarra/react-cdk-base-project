@@ -30,6 +30,7 @@ Follow these steps to get started:
 1. Download and install depencencies `npm`, `aws cli` and `cdk`
 1. Configure your local environment to login to AWS. This project will deploy to the region you hace as default
 1. Review the `.env` file and change the values to whatever you want (In a section below all the parameters are explained)
+1. Run `npm i` in the main folder of this project and inside the website react folder.
 1. Write your react website (or change it by any other static website)
 1. Create and write your APi endpoints in the lambda folder
 1. If you want to filter your budget for only the resources on this project, you will need to create
