@@ -40,7 +40,23 @@ export function listMethods(lambdasList: string[]): string[] {
  */
 export function createPath(fileName: string): string {
   // Transforma el texto en minúsculas y elimina los espacios
-  return fileName.split(".")[0].toLowerCase().replace("-", "");
+  // First we remove the extension
+  fileName = fileName.split(".")[0];
+  // If the file has # we remove what is after it
+  if (fileName.includes("#")) {
+    fileName = fileName.split("#")[0];
+  }
+  return fileName.toLowerCase().replace("-", "");
+}
+
+export function getEndpointPathVariables(fileName: string): string[] {
+  let pathVariables: string[] = [];
+  if (fileName.includes("#")) {
+    pathVariables = fileName.split("#");
+    // Removing the first element
+    pathVariables.shift();
+  }
+  return pathVariables;
 }
 
 /**

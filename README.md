@@ -85,8 +85,11 @@ The API will create a stage under the path in the `.env` parameter called `apiPr
 #### API endpoints
 
 To create a new endpoint, add a new file (for now only Python) in the `resources/lambdas` folder.
-You should name your file following this nomenclature `METHOD-functionName.py`. The `METHOD` will be used to create the endpoint.
-For example, `GET-users.py` will create a GET endpoint with the lambda.
+You should name your file following this nomenclature `METHOD-functionName#PATH_VARIABLE1#PATH_VARIABLE2.py`, where:
+
+- `METHOD` will be used to create the endpoint with the method specified: `GET`, `POST`, `PUT`, etc.
+- `PATH_VARIABLEX` will be user to create a path variable.
+  For example, `GET-users#userId.py` will create a GET endpoint with a url like `/api/getuser/:userId` with the lambda.
 
 #### API usage
 
@@ -146,3 +149,11 @@ In the file [Cognito on react.md](/docs/Cognito%20on%20react.md) you can see a d
 
 With all these AWS products, we are taking advantage of the free tier, but with enough usage, you will surpase the thresholds for the free tier.
 In [this document](/docs/Free%20tier%20short%20explanation.md) you can see the detailed list of what to expect (as of March2025 and an approximation/simplification, visit AWS pricing website for the real values).
+
+### Component Ideas
+
+- Loaders:
+  - Campfire https://uiverse.io/Admin12121/stupid-mouse-29
+  - World https://uiverse.io/Novaxlo/rotten-lionfish-4
+- Toggles:
+  - https://uiverse.io/Nawsome/silent-owl-45

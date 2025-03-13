@@ -82,9 +82,11 @@ export class myApi {
       // Checks if the file is python
       if (lambda.endsWith(".py")) {
         const fileName = lambda.split(".")[0];
-        console.log(`Creating lambda: ${lambda} with name: ${fileName}`);
-        const thisLambda = new Function(scope, `lambdaFunction-${lambda}`, {
-          functionName: fileName,
+        const lambdaName = fileName.split("#").join("-");
+        const endpointPath = utils.createPath(fileName);
+        console.log(`Creating lambda: ${lambda} with name: ${lambdaName}`);
+        const thisLambda = new Function(scope, `lambdaFunction-${lambdaName}`, {
+          functionName: lambdaName,
           runtime: Runtime.PYTHON_3_13,
           handler: `${fileName}.lambda_handler`,
           environment: {},
@@ -96,12 +98,17 @@ export class myApi {
         // Creating the endpoint if lambda exists
         if (thisLambda) {
           const lambdaMethod = fileName.split("-")[0];
-          const endpointPath = utils.createPath(fileName);
+          const endpointPathVariables = utils.getEndpointPathVariables(fileName);
           console.log(`lambdaMethod: ${lambdaMethod} endpointPath: ${endpointPath}`);
+          console.log(`Endpoint path variables: ${endpointPathVariables}`);
           const currentLambda = new LambdaIntegration(thisLambda, {});
-          this.api.root.addResource(endpointPath).addMethod(lambdaMethod, currentLambda, {
+          let resource = this.api.root;
+          resource.addResource(endpointPath).addMethod(lambdaMethod, currentLambda, {
             apiKeyRequired: true,
           });
+          for (let pathVariable of endpointPathVariables) {
+            resource.addResource(`${pathVariable}`);
+          }
 
           new cdk.CfnOutput(scope, `endpoint-${endpointPath}`, {
             value: endpointPath,
