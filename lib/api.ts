@@ -102,13 +102,13 @@ export class myApi {
           console.log(`lambdaMethod: ${lambdaMethod} endpointPath: ${endpointPath}`);
           console.log(`Endpoint path variables: ${endpointPathVariables}`);
           const currentLambda = new LambdaIntegration(thisLambda, {});
-          let resource = this.api.root;
-          resource.addResource(endpointPath).addMethod(lambdaMethod, currentLambda, {
+          let resource = this.api.root.addResource(endpointPath);
+          for (let pathVariable of endpointPathVariables) {
+            resource = resource.addResource(`{${pathVariable}}`);
+          }
+          resource.addMethod(lambdaMethod, currentLambda, {
             apiKeyRequired: true,
           });
-          for (let pathVariable of endpointPathVariables) {
-            resource.addResource(`${pathVariable}`);
-          }
 
           new cdk.CfnOutput(scope, `endpoint-${endpointPath}`, {
             value: endpointPath,
