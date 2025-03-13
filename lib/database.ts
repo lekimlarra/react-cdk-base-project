@@ -5,10 +5,15 @@ import { Construct } from "constructs";
 // Custom imports
 import * as utils from "./utils";
 
+function filterJson(files: Array<string>): Array<string> {
+  // Filter the files that are not json
+  return files.filter((file) => file.includes(".json"));
+}
+
 const databasePath = path.join(__dirname, process.env.databasePath ?? "../resources/databases");
 
 export class database {
-  allDBFiles = utils.listFiles(databasePath);
+  allDBFiles = filterJson(utils.listFiles(databasePath));
   allTables: Table[] = [];
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
     for (let db of this.allDBFiles) {
@@ -30,11 +35,13 @@ export class database {
           sortKey: { name: sk, type: skType },
           partitionKey: { name: pk, type: pkType },
           tableName: tableName,
+          removalPolicy: cdk.RemovalPolicy.RETAIN,
         };
       } else {
         tableProps = {
           partitionKey: { name: pk, type: pkType },
           tableName: tableName,
+          removalPolicy: cdk.RemovalPolicy.RETAIN,
         };
       }
       const tableCreated = new Table(scope, tableName, tableProps);

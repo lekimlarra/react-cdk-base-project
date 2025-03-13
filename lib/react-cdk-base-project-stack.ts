@@ -16,7 +16,7 @@ const websiteBuildPath = process.env.websiteBuildPath ?? "../resources/website/b
 const httpCertificate = process.env.httpCertificate ?? "";
 const yourDomain = process.env.yourDomain ?? "";
 const apiProdBasePath = (process.env.apiProdBasePath ?? "prod") + "/*";
-const createCognito = Boolean(process.env.createCognito) ?? false;
+const createCognito = process.env.createCognito == "true";
 
 export class ReactCdkBaseProjectStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {

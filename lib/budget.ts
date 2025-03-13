@@ -11,7 +11,7 @@ const budgetFirstNotificationLimit = process.env.budgetFirstNotificationLimit ??
 const budgetStopServiceLimit = process.env.budgetStopServiceLimit ?? 100;
 const tagName = process.env.tagName ?? "react-cdk-base-project";
 const budgetName = process.env.budgetName ?? "";
-const appDeployedOnce = Boolean(process.env.appDeployedOnce) ?? false;
+const appDeployedOnce = process.env.appDeployedOnce == "true";
 
 export class budget {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
