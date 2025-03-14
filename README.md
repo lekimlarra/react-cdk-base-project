@@ -97,6 +97,12 @@ When creating an API, an API key is automatically generated to limit the usage o
 You will need to retrieve the key value from your AWS account.
 You can configure the API key values in the `.env` file.
 
+#### Open API specs
+
+AWS provides an API to transform our API Gateway into a Swagger. It is not perfect, but it can be helpful sometimes.
+One the Cloud Formation Outputs of this project is `commandToDownloadOpenApi`. If you copy and run this command, it will store a file in the `/docs` folder with the Swagger specs.
+You can choose between `json` and `yaml` by changing the `.env` parameter `openApiExportType`.
+
 ### DATABASE
 
 You can create your own databases by creating JSON files inside the folder `/resources/databases`.

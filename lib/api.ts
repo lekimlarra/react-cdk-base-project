@@ -14,6 +14,7 @@ const lambdasPath = path.join(__dirname, process.env.lambdasPath ?? "../resource
 const apyKeyName = process.env.apyKeyName ?? "";
 const restApiName = process.env.restApiName ?? "cdk-template-api";
 const apiProdBasePath = process.env.apiProdBasePath ?? "prod";
+const openApiExportType = process.env.openApiExportType ?? "yaml";
 
 export class myApi {
   allLambdaFiles = utils.listFiles(lambdasPath);
@@ -127,6 +128,13 @@ export class myApi {
       }
     }
 
+    // ********************** GENERATING AWS COMMAND TO DOWNLOAD OPEN API SPECS **********************
+    const command = `aws apigateway get-export --rest-api-id ${this.api.restApiId} --stage-name ${apiProdBasePath} --export-type swagger --accept application/${openApiExportType} ./docs/openapi.${openApiExportType}`;
+    console.log("COMMAND TO DOWNLOAD OPEN API SPECS:");
+    console.log(command);
+    new cdk.CfnOutput(scope, `commandToDownloadOpenApi`, {
+      value: command,
+    });
     // ********************** CDK OUTPUTS **********************
     new cdk.CfnOutput(scope, `APIURL`, {
       value: this.api.url,
