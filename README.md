@@ -151,6 +151,14 @@ The distribution has 2 behaviours:
 If you want to have users with login in your website, you can set the parameter `createCognito` to `true` in the `.env` file. This will create a Cognito Pool and a Cognito Pool Client that you can use to manage your user sessions.
 In the file [Cognito on react.md](/docs/Cognito%20on%20react.md) you can see a detailed explanation on how to connect your react website to cognito in a very simple way.
 
+#### Trigger for new users
+
+We have added a lambda function [here](/lib/Cognito/lambdaNewUser.py) that will be triggered every time a new user registers in your Cognito user pool.
+You will need to configure a couple things to make it work for your needs:
+
+1. You must change the code of your lambda. We put an example of storing the user data in a DynamoDB table, but you might need something else.
+1. In the [Cognito.ts](/lib/Cognito/cognito.ts) file, we have this line `const table = Table.fromTableName(scope, "usersTableForCognito", "users");` that allows the lambda to read and write to the `users` table. If you name your table differently, you will need to change this.
+
 ### Expected costs of this infrastructure
 
 With all these AWS products, we are taking advantage of the free tier, but with enough usage, you will surpase the thresholds for the free tier.

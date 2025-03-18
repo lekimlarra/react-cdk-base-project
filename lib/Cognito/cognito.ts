@@ -1,6 +1,10 @@
 import * as cdk from "aws-cdk-lib";
-import { AccountRecovery, UserPool, UserPoolClient } from "aws-cdk-lib/aws-cognito";
+import path = require("path");
+import { AccountRecovery, CfnUserPool, UserPool, UserPoolClient } from "aws-cdk-lib/aws-cognito";
 import { Construct } from "constructs";
+import { Function, Runtime, Code } from "aws-cdk-lib/aws-lambda";
+import { PolicyStatement, ServicePrincipal } from "aws-cdk-lib/aws-iam";
+import { Table } from "aws-cdk-lib/aws-dynamodb";
 
 const yourDomain = process.env.yourDomain ?? "";
 const logoutPath = process.env.logoutPath ?? "";
@@ -50,13 +54,54 @@ export class myCognito {
       },
     });
 
-    // 3. Salida de valores (para usarlos desde la web)
+    // 3. Creating lambda that will be run when a new user is registered in Cognito
+    const lambdaNewUserPath = path.join(__dirname, "./");
+    console.log("Lambda path:", lambdaNewUserPath);
+    const lambdaNewUser = new Function(scope, `newCognitoUser`, {
+      functionName: "newCognitoUser",
+      runtime: Runtime.PYTHON_3_13,
+      handler: `lambdaNewUser.lambda_handler`,
+      environment: {},
+      memorySize: 256,
+      timeout: cdk.Duration.minutes(1),
+      //ephemeralStorageSize: Size.mebibytes(1024),
+      code: Code.fromAsset(lambdaNewUserPath),
+    });
+
+    // 4. Configuring permissions for the lambda so Cognito can invoke it
+    const invokePolicyStatement = new PolicyStatement({
+      actions: ["lambda:InvokeFunction"],
+      resources: [lambdaNewUser.functionArn], // ARN de la Lambda
+      conditions: {
+        ArnLike: {
+          "AWS:SourceArn": this.userPool.userPoolArn,
+        },
+      },
+    });
+
+    lambdaNewUser.addPermission("CognitoInvokePermission", {
+      principal: new ServicePrincipal("cognito-idp.amazonaws.com"),
+      action: "lambda:InvokeFunction",
+      sourceArn: this.userPool.userPoolArn,
+    });
+
+    // 5. Grating write permissions to lambda in our DB
+    const table = Table.fromTableName(scope, "usersTableForCognito", "users");
+    table.grantReadWriteData(lambdaNewUser);
+
+    // 6. Adding trigger to run lambda after user creation in Cognito
+    const userPoolResource = this.userPool.node.defaultChild as CfnUserPool;
+    userPoolResource.addPropertyOverride("LambdaConfig.PostConfirmation", lambdaNewUser.functionArn);
+
+    // 5. Outputs
     new cdk.CfnOutput(scope, "UserPoolId", {
       value: this.userPool.userPoolId,
     });
-
     new cdk.CfnOutput(scope, "UserPoolClientId", {
       value: this.userPoolClient.userPoolClientId,
+    });
+    new cdk.CfnOutput(scope, "newCognitoUserLambdaArn", {
+      value: lambdaNewUser.functionArn,
     });
   }
 }
