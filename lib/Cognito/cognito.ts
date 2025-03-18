@@ -39,6 +39,7 @@ export class myCognito {
       userPoolClientName: userPoolClientName,
       authFlows: {
         userPassword: true, // For the login with email + password
+        userSrp: true, // For the login with email + password
       },
       oAuth: {
         callbackUrls: [`${yourDomain}${cognitoCallBackPath}`],

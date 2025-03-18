@@ -9,7 +9,7 @@ import { HttpOrigin } from "aws-cdk-lib/aws-cloudfront-origins";
 import { myApi } from "./api";
 import { budget } from "./budget";
 import { database } from "./database";
-import { myCognito } from "./cognito";
+import { myCognito } from "./Cognito/cognito";
 
 const bucketName = process.env.bucketName ?? "";
 const websiteBuildPath = process.env.websiteBuildPath ?? "../resources/website/build";
