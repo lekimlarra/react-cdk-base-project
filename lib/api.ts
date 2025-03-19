@@ -1,11 +1,12 @@
 import * as cdk from "aws-cdk-lib";
 import path = require("path");
 import { Construct } from "constructs";
-import { RestApi, LambdaIntegration, Period, ApiKey, Stage, Deployment } from "aws-cdk-lib/aws-apigateway";
+import { RestApi, LambdaIntegration, Period, ApiKey, Stage, Deployment, CognitoUserPoolsAuthorizer, AuthorizationType } from "aws-cdk-lib/aws-apigateway";
 import { Function, Runtime, Code } from "aws-cdk-lib/aws-lambda";
 // Custom imports
 import * as utils from "./utils";
 import { Table } from "aws-cdk-lib/aws-dynamodb";
+import { myCognito } from "./Cognito/cognito";
 
 const quota = process.env.apyKeyQuota ?? 1000;
 const rateLimit = process.env.apiKeyRateLimit ?? 5;
@@ -21,11 +22,12 @@ export class myApi {
   metodos = utils.listMethods(this.allLambdaFiles);
   allLambdas: Function[] = [];
   api: RestApi;
-  constructor(scope: Construct, id: string, createdTables: Table[], props?: cdk.StackProps) {
+  constructor(scope: Construct, id: string, createdTables: Table[], thisCognito: myCognito | null, props?: cdk.StackProps) {
     // Adding OPTIONS for CORS
     this.metodos.push("OPTIONS");
     console.log("All lambdas:", this.allLambdaFiles);
     console.log("All metodos:", this.metodos);
+
     // ********************** API **********************
     this.api = new RestApi(scope, "cdk-template-api", {
       restApiName: restApiName,
@@ -51,6 +53,14 @@ export class myApi {
       deployment: deployment,
       stageName: apiProdBasePath,
     });*/
+
+    // ********************** COGNITO AUTHORIZER **********************
+    let authorizerCongnito: CognitoUserPoolsAuthorizer | null = null;
+    if (thisCognito) {
+      authorizerCongnito = new CognitoUserPoolsAuthorizer(scope, "cognitoAuthorizerApi", {
+        cognitoUserPools: [thisCognito.userPool],
+      });
+    }
 
     // ********************** KEYS AND USAGE PLANS **********************
     // Creating usage plan
@@ -107,9 +117,19 @@ export class myApi {
           for (let pathVariable of endpointPathVariables) {
             resource = resource.addResource(`{${pathVariable}}`);
           }
-          resource.addMethod(lambdaMethod, currentLambda, {
-            apiKeyRequired: true,
-          });
+
+          // If we have cognito, we add the authorizer
+          if (thisCognito && authorizerCongnito) {
+            resource.addMethod(lambdaMethod, currentLambda, {
+              authorizer: authorizerCongnito,
+              authorizationType: AuthorizationType.COGNITO,
+              apiKeyRequired: true,
+            });
+          } else {
+            resource.addMethod(lambdaMethod, currentLambda, {
+              apiKeyRequired: true,
+            });
+          }
 
           new cdk.CfnOutput(scope, `endpoint-${endpointPath}`, {
             value: endpointPath,

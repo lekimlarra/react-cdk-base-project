@@ -97,6 +97,13 @@ When creating an API, an API key is automatically generated to limit the usage o
 You will need to retrieve the key value from your AWS account.
 You can configure the API key values in the `.env` file.
 
+#### API Security
+
+You have 2 layers of security with this project:
+
+- API KEY
+- Cognito authorizer: This will only be set up if you choose to create a cognito pool
+
 #### Open API specs
 
 AWS provides an API to transform our API Gateway into a Swagger. It is not perfect, but it can be helpful sometimes.

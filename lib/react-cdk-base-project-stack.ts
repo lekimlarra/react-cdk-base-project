@@ -27,8 +27,13 @@ export class ReactCdkBaseProjectStack extends cdk.Stack {
     console.log("DATABASES CREATEDd");
     console.log(databases);
 
+    // ********************** COGNITO **********************
+    let thisCognito: myCognito | null = null;
+    console.log("createCognito", createCognito);
+    if (createCognito) thisCognito = new myCognito(this, id, props);
+
     // ********************** API **********************
-    const myAPI = new myApi(this, id, databases.allTables, props);
+    const myAPI = new myApi(this, id, databases.allTables, thisCognito, props);
 
     // ********************** WEBSITE - S3 **********************
     const websiteBucket = new Bucket(this, "s3bucket", {
@@ -56,7 +61,7 @@ export class ReactCdkBaseProjectStack extends cdk.Stack {
     const cfDistribution = new Distribution(this, "myDist", {
       defaultBehavior: {
         origin: new HttpOrigin(`${websiteBucket.bucketWebsiteDomainName}`, {
-          protocolPolicy: OriginProtocolPolicy.HTTP_ONLY, // Static website solo soporta HTTP (no HTTPS)
+          protocolPolicy: OriginProtocolPolicy.HTTP_ONLY, // For static website
         }),
       },
     });
@@ -65,7 +70,8 @@ export class ReactCdkBaseProjectStack extends cdk.Stack {
       cachePolicy: CachePolicy.CACHING_DISABLED, // Suele ser mejor desactivar caché en APIs.
       allowedMethods: AllowedMethods.ALLOW_ALL,
       viewerProtocolPolicy: ViewerProtocolPolicy.HTTPS_ONLY,
-      originRequestPolicy: apiKeyPolicy,
+      originRequestPolicy: OriginRequestPolicy.ALL_VIEWER_EXCEPT_HOST_HEADER,
+      //originRequestPolicy: apiKeyPolicy,
     });
 
     // ********************** WEBSITE - S3 DEPLOYMENT **********************
@@ -79,10 +85,6 @@ export class ReactCdkBaseProjectStack extends cdk.Stack {
 
     // ********************** BUDGET **********************
     const myBudget = new budget(this, id, props);
-
-    // ********************** COGNITO **********************
-    let thisCognito: myCognito;
-    if (createCognito) thisCognito = new myCognito(this, id, props);
 
     // ********************** CDK OUTPUTS **********************
     new cdk.CfnOutput(this, "BucketUrl", {
