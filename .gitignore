@@ -4,6 +4,8 @@
 node_modules
 !resources/react-website/**
 
+**/*.pyc
+
 # CDK asset staging directory
 .cdk.staging
 cdk.out

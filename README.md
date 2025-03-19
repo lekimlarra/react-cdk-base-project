@@ -41,6 +41,7 @@ Follow these steps to get started:
 - `aws sso login` to login to AWS before doing a deploy
 - `npm run build` compile the react website (run it in the folder of the website configured in `websiteBuildPath`)
 - `cdk deploy` to deploy the infrastructure
+- There is a custom command to compile the website and deploy the cdk stack together --> `npm run mydeploy`. This command will also install the python libraries that are in your `requirements.txt` in your lambda's folder.
 
 ### Customization
 
@@ -90,6 +91,8 @@ You should name your file following this nomenclature `METHOD-functionName#PATH_
 - `METHOD` will be used to create the endpoint with the method specified: `GET`, `POST`, `PUT`, etc.
 - `PATH_VARIABLEX` will be user to create a path variable.
   For example, `GET-users#userId.py` will create a GET endpoint with a url like `/api/getuser/:userId` with the lambda.
+
+If you need specific libraries for your lambdas, add a `requirements.txt` file to the lambda's folder and if you run `npm run mydeploy`, it will automatically install and deploy them.
 
 #### API usage
 

@@ -9,7 +9,7 @@
     "watch": "tsc -w",
     "test": "jest",
     "cdk": "cdk",
-    "mydeploy": "npm run build && cdk deploy --require-approval never",
+    "mydeploy": "pip install -r ./resources/lambdas/requirements.txt -t ./resources/lambdas && cd resources/react-website && npm run build && cd ../../ && cdk deploy --require-approval never",
     "mysynth": "npm run build && cdk synth"
   },
   "devDependencies": {
