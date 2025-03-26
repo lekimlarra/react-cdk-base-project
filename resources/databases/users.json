@@ -2,5 +2,7 @@
     "pk": "pkId",
     "pkType": "S",
     "sk": "skId",
-    "skType": "S"
+    "skType": "S",
+    "readCapacity": 1,
+    "writeCapacity": 1
 }

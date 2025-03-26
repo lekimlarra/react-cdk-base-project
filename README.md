@@ -123,7 +123,9 @@ The JSON files must follow this structure:
     "pk": "pkId",
     "pkType": "S",
     "sk": "skId",
-    "skType": "S"
+    "skType": "S",
+    "readCapacity": 1,
+    "writeCapacity": 1
 }
 ```
 
@@ -133,6 +135,10 @@ Where:
 - `pkType` is the type of the partition key. This field is mandatory.
 - `sk` is the sort key. This field is optional.
 - `skType` is the type of the partition key. This field is optional, but only if there is no `sk`.
+- `readCapacity` is the read capacity of the dynamo DB. This is optional and will have a value of 1 by default.
+- `writeCapacity` is the write capacity of the dynamo DB. This is optional and will have a value of 1 by default.
+
+To know more about read and write capacity, read [this](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/provisioned-capacity-mode.html#read-write-capacity-units)
 
 The types can be:
 
